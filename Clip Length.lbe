@@ -1,0 +1,31 @@
+[extension_name]
+Get Clip length
+[insert_external]
+<div><p>Get Clip length extension is installed. </p></div>
+<!--
+ * @name: Get Clip length, @version: 1.2, @author: Christinna#9031
+ * @link: https://github.com/christinna9031/LB-Twitch-Clip-Length
+ * -->
+[insert_command]
+lioranboardclient.send('{"type":"MESSAGE","topic":"ExtensionCommand","name":"Get Clip length","boxcount":3,"boxname1":"clip_url","boxtype1":"string","boxname2":"variable","boxtype2":"string","boxname3":"trigger","boxtype3":"string"}');
+[insert_hook]
+case "GetCliplength":{
+	LBGetCliplength(LioranBoardJSON.clip_url, LioranBoardJSON.variable, LioranBoardJSON.trigger )
+}break
+[insert_script]
+function LBGetCliplength(clipurl,variable,trigger){
+  const ClipLength = fetch('https://cors-anywhere.herokuapp.com/https://api.twitch.tv/kraken/clips/'+clipurl, {
+    'headers': {
+      'Client-ID': TWITCH_CLIENT_ID,
+    'Accept': 'application/vnd.twitchtv.v5+json'
+    }
+  });
+  
+  ClipLength.then(response => response.json())
+    .then(data => {
+    let clip_duration=(data.duration*1000)
+    lioranboardclient.send('{"type":"MESSAGE","topic":"SetValue","valuename":"' + variable + '","value":"'+clip_duration+'","real":false}')
+    setTimeout(function(){ lioranboardclient.send('{"type":"MESSAGE","topic":"ExtensionTrigger","trigger":"'+trigger+'"}') }, clip_duration);
+   });
+  }
+[insert_over]
