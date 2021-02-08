@@ -7,14 +7,14 @@ Get Clip length
  * @link: https://github.com/christinna9031/LB-Twitch-Clip-Length
  * -->
 [insert_command]
-lioranboardclient.send('{"type":"MESSAGE","topic":"ExtensionCommand","name":"Get Clip length","boxcount":3,"boxname1":"clip_url","boxtype1":"string","boxname2":"variable","boxtype2":"string","boxname3":"trigger","boxtype3":"string"}');
+lioranboardclient.send('{"type":"MESSAGE","topic":"ExtensionCommand","name":"Get Clip length","boxcount":3,"boxname1":"clip_id","boxtype1":"string","boxname2":"variable","boxtype2":"string","boxname3":"trigger","boxtype3":"string"}');
 [insert_hook]
 case "GetCliplength":{
-	LBGetCliplength(LioranBoardJSON.clip_url, LioranBoardJSON.variable, LioranBoardJSON.trigger )
+	LBGetCliplength(LioranBoardJSON.clip_id, LioranBoardJSON.variable, LioranBoardJSON.trigger )
 }break
 [insert_script]
-function LBGetCliplength(clipurl,variable,trigger){
-  const ClipLength = fetch('https://lioranboard-proxy.herokuapp.com/https://api.twitch.tv/kraken/clips/'+clipurl, {
+function LBGetCliplength(clip_id,variable,trigger){
+  const ClipLength = fetch('https://api.twitch.tv/kraken/clips/'+clip_id, {
     'headers': {
       'Client-ID': TWITCH_CLIENT_ID,
     'Accept': 'application/vnd.twitchtv.v5+json'
