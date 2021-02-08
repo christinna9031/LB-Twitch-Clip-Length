@@ -14,7 +14,7 @@ case "GetCliplength":{
 }break
 [insert_script]
 function LBGetCliplength(clipurl,variable,trigger){
-  const ClipLength = fetch('https://cors-anywhere.herokuapp.com/https://api.twitch.tv/kraken/clips/'+clipurl, {
+  const ClipLength = fetch('https://lioranboard-proxy.herokuapp.com/https://api.twitch.tv/kraken/clips/'+clipurl, {
     'headers': {
       'Client-ID': TWITCH_CLIENT_ID,
     'Accept': 'application/vnd.twitchtv.v5+json'
