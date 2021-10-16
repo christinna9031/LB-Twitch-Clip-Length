@@ -1,5 +1,6 @@
 [extension_name]
 Get Clip length
+
 [insert_external]
 <div><p>Get Clip length extension is installed. </p></div>
 <!--
@@ -8,26 +9,28 @@ Get Clip length
  * -->
 
 [insert_command]
-lioranboardclient.send('{
-  "type":"MESSAGE",
-  "topic":"ExtensionCommand",
-  "name":"Get Clip length",
-  "boxcount":3,
-  "boxname1":"clip_id",
-  "boxtype1":"string",
-  "boxname2":"variable",
-  "boxtype2":"string",
-  "boxname3":"trigger",
-  "boxtype3":"string"
+lioranboardclient.send('{\
+  "type":"MESSAGE",\
+  "topic":"ExtensionCommand",\
+  "name":"Get Clip length",\
+  "boxcount":4,\
+  "boxname1":"clip_id",\
+  "boxtype1":"string",\
+  "boxname2":"variable",\
+  "boxtype2":"string",\
+  "boxname3":"trigger",\
+  "boxtype3":"string",\
+  "boxname4":"max_length",\
+  "boxtype4":"real"\
   }');
 
 [insert_hook]
-case "GetCliplength":{
-	LBGetCliplength(LioranBoardJSON.clip_id, LioranBoardJSON.variable, LioranBoardJSON.trigger )
-}break
+case "GetCliplength": {
+  LBGetCliplength(LioranBoardJSON.clip_id, LioranBoardJSON.variable, LioranBoardJSON.trigger, LioranBoardJSON.max_length)
+} break
 
 [insert_script]
-function LBGetCliplength(clip_id, variable, trigger){
+function LBGetCliplength(clip_id, variable, trigger, max_length){
   const ClipLength = fetch('https://api.twitch.tv/kraken/clips/'+clip_id, {
     'headers': {
       'Client-ID': TWITCH_CLIENT_ID,
@@ -37,25 +40,29 @@ function LBGetCliplength(clip_id, variable, trigger){
 
   ClipLength.then(response => response.json())
     .then(data => {
-		  console.log(data.duration)
-	    if (data.duration != undefined && data.duration > 1) {
-        let clip_duration=(data.duration * 1000)
+      console.log(data.duration)
+      if (data.duration != undefined && data.duration > 1) {
+        let clip_duration = (data.duration * 1000)
+        if (max_length && clip_duration > max_length) {
+          clip_duration = max_length
+        }
 
-	      lioranboardclient.send('{
-          "type": "MESSAGE",
-          "topic": "SetValue",
-          "valuename": "' + variable + '",
-          "value": "'+clip_duration+'",
-          "real": false
+        lioranboardclient.send('{\
+          "type":"MESSAGE",\
+          "topic":"SetValue",\
+          "valuename":"' + variable + '",\
+          "value":"'+clip_duration+'",\
+          "real":false\
         }')
 
-        setTimeout(function() { 
-          lioranboardclient.send('{
-            "type":"MESSAGE",
-            "topic":"ExtensionTrigger",
-            "trigger":"'+trigger+'"
+        setTimeout(function() {
+          lioranboardclient.send('{\
+            "type":"MESSAGE",\
+            "topic":"ExtensionTrigger",\
+            "trigger":"'+trigger+'"\
           }') 
-        }, clip_duration);}
+        }, clip_duration);
+      }
    });
 }
 [insert_over]
